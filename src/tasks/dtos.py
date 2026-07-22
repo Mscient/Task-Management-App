@@ -10,6 +10,9 @@ class TaskSchema(BaseModel):
 class TaskOutSchema(BaseModel):
     id:int
     title:str
+    description:str
+    is_Completed:bool
+    user_id:int | None=0
     
     
 
