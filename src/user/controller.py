@@ -1,5 +1,5 @@
 from src.user.dtos import Userschema,LoginSchema
-from fastapi import HTTPException,status,Request
+from fastapi import HTTPException,BackgroundTasks,status,Request
 
 from sqlalchemy.orm import Session
 from src.user.models import UserModel
@@ -8,6 +8,7 @@ from src.utils.settings import settings
 import jwt
 from jwt.exceptions import InvalidTokenError
 from datetime import datetime,timedelta
+from src.utils.mail import send_email
 
 password_hash=PasswordHash.recommended()
 
@@ -18,7 +19,7 @@ def verify(plain_password,hashed_password):
     return password_hash.verify(plain_password,hashed_password)
 
 
-def register(body:Userschema,db:Session):
+async def register(body:Userschema,db:Session,bg_task:BackgroundTasks):
     is_user=db.query(UserModel).filter(UserModel.username==body.username).first()
     if is_user:
         raise HTTPException(400,detail="Username alredy exists...")
@@ -37,6 +38,11 @@ def register(body:Userschema,db:Session):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    #email conformation
+    
+    bg_task.add_task(send_email,[body.email])
+
     return new_user
 
 def login(body:LoginSchema,db:Session):
