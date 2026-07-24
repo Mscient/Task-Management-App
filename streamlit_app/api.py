@@ -1,7 +1,8 @@
+import os
 import requests
 import streamlit as st
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = os.environ.get("API_URL", "http://127.0.0.1:8000")
 
 def login_user(username, password):
     url = f"{BASE_URL}/user/login"
