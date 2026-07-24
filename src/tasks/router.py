@@ -32,6 +32,3 @@ def update_task(task_id:int,body:TaskSchema,db:Session=Depends(get_db),user:User
 def delete_task(task_id:int,db:Session=Depends(get_db),user:UserModel=Depends(is_authentication)):
     return controller.delete(task_id,db,user)
 
-
-
-
